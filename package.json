@@ -2,7 +2,7 @@
   "name": "swap",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "test": "mocha \"test/**/*.spec.ts\""

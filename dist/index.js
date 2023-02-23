@@ -51,8 +51,8 @@ function getPath(amountIn) {
                     return [4 /*yield*/, sdk_1.Trade.bestTradeExactIn([usdcCompPair], new sdk_1.TokenAmount(USDC, BigInt(amountIn)), COMP, { maxNumResults: 1 })];
                 case 2:
                     trade = (_a.sent())[0];
-                    // return the route path as an array of token addresses
-                    return [2 /*return*/, trade.route.path.map(function (token) { return token.address; })];
+                    // return the route path as an array of token symbol
+                    return [2 /*return*/, trade.route.path.map(function (token) { return (token === null || token === void 0 ? void 0 : token.symbol) || ""; })];
             }
         });
     });
