@@ -20,6 +20,7 @@
     "pretty": false,
     "strict": true,
     "sourceMap": true,
+    "resolveJsonModule":true,
     "target": "ES2018"
   },
 }
