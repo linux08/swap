@@ -8,6 +8,7 @@
       "es2020",
       "es5"
     ],
+    "outDir": "dist",
     "moduleResolution": "node16",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
@@ -23,4 +24,7 @@
     "resolveJsonModule":true,
     "target": "ES2018"
   },
+  "exclude": [
+    "test/*"
+  ],
 }
