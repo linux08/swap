@@ -13,7 +13,6 @@ describe("getPath", () => {
     let amountIn = 2000;
     const expectedPath = [
       usdcToken.address,
-      // WETH[chainId].address,
       compToken.address,
     ];
     const path = await getPath(amountIn.toString());

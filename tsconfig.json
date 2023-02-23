@@ -5,7 +5,7 @@
     "forceConsistentCasingInFileNames": true,
     "importHelpers": true,
     "outDir": "dist",
-    "moduleResolution": "node16",
+    // "moduleResolution": "node16",
     "noEmitOnError": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
@@ -16,10 +16,10 @@
     "preserveWatchOutput": true,
     "pretty": false,
     "strict": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "resolveJsonModule":true,
-    "target": "ES6",
-    "lib": ["DOM", "ES6", "DOM.Iterable", "ScriptHost", "ES2016.Array.Include"]
+    "target": "ES5",
+    "lib": ["DOM", "ES6","ES5", "DOM.Iterable", "ScriptHost", "ES2016.Array.Include"]
   },
   "exclude": [
     "test/*"
