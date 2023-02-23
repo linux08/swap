@@ -1,5 +1,4 @@
 import { Token, ChainId, Trade, TokenAmount, Fetcher } from "@uniswap/sdk";
-
 import { JsonRpcProvider } from "@ethersproject/providers";
 import { INFRURA_PROJECT_ID, USDC_TOKEN_ADDRESS, COMP_TOKEN_ADDRESS } from "./constants";
 
@@ -50,6 +49,6 @@ export async function getPath(amountIn: string): Promise<string[]> {
         { maxNumResults: 1 }
     );
 
-    // return the route path as an array of token addresses
-    return trade.route.path.map((token) => token.address);
+    // return the route path as an array of token symbol
+    return trade.route.path.map((token: Token) => token?.symbol || "");
 }

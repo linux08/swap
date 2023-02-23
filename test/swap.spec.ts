@@ -12,8 +12,8 @@ describe("getPath", () => {
     this.timeout(5000);
     let amountIn = 2000;
     const expectedPath = [
-      usdcToken.address,
-      compToken.address,
+      usdcToken.symbol,
+      compToken.symbol,
     ];
     const path = await getPath(amountIn.toString());
     expect(path).to.deep.equal(expectedPath);
