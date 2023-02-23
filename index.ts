@@ -1,30 +1,56 @@
-import { ethers } from 'ethers';
-import { ChainId, Token, WETH, Fetcher, Route, Trade, TokenAmount, TradeType } from '@uniswap/sdk';
-import { USDC_TOKEN_ADDRESS,INFRURA_PROJECT_ID, COMP_TOKEN_ADDRESS } from './constants';
+import { Token, ChainId, Trade, TokenAmount, Fetcher } from "@uniswap/sdk";
 
+import { BaseProvider, JsonRpcProvider } from "@ethersproject/providers";
+import { INFRURA_PROJECT_ID, USDC_TOKEN_ADDRESS, COMP_TOKEN_ADDRESS } from "./constants";
 
-export const provider = new ethers.providers.JsonRpcProvider(`https://mainnet.infura.io/v3/${INFRURA_PROJECT_ID}`);
+const mainNetChainId = ChainId.MAINNET;
 
+// define the tokens you want to swap between
+const USDC = new Token(mainNetChainId, USDC_TOKEN_ADDRESS, 6, "USDC", "USD Coin");
 
-const chainId = ChainId.MAINNET;
-const usdcToken = new Token(chainId, USDC_TOKEN_ADDRESS, 6, 'USDC', 'USD Coin');
-const compToken = new Token(chainId, COMP_TOKEN_ADDRESS, 18, 'COMP', 'Compound');
+const COMP = new Token(mainNetChainId, COMP_TOKEN_ADDRESS, 18, "COMP", "Compound");
 
+// create a provider object for the Ethereum network you want to use
+const jsonprovider = new JsonRpcProvider(
+  `https://eth-mainnet.g.alchemy.com/v2/${INFRURA_PROJECT_ID}`
+);
 
-// Amount is $2000
-async function getAmountOut(amount: number): Promise<TokenAmount<TradeType>> {
-    const usdcAmount = new TokenAmount(usdcToken, BigInt(amount));
-    const pair = await Fetcher.fetchPairData(usdcToken, compToken, provider);
-    const route = new Route([pair], WETH[chainId]);
-    const trade = new Trade(route, usdcAmount, TradeType.EXACT_INPUT);
-    return trade.minimumAmountOut(new TokenAmount(compToken, '0'));
+export const provider = jsonprovider as BaseProvider;
+
+// function to get the amount of COMP received for a given amount of USDC
+export async function getAmountOut(amountIn: string): Promise<number | Error> {
+  try {
+    // Fetch the pair instance for USDC-COMP
+    const usdcCompPair = await Fetcher.fetchPairData(USDC, COMP, provider);
+    // create a trade object to represent the swap
+    const trade = await Trade.bestTradeExactIn(
+      [usdcCompPair],
+      new TokenAmount(USDC, BigInt(amountIn)),
+      COMP,
+      {
+        maxNumResults: 1,
+        maxHops: 3,
+      }
+    );
+    // return the amount of COMP received for the trade
+    return parseFloat(trade[0].outputAmount.toExact()) * 1e6;
+  } catch (err: any) {
+    throw err;
+  }
 }
 
-// Function to get the optimal swap path
-function getPath(): string[] {
-    const usdcAddress = usdcToken.address;
-    const compAddress = compToken.address;
-    return [usdcAddress, WETH[chainId].address, compAddress];
-}
+// function to get the optimal swap path for the trade
+export async function getPath(amountIn: string): Promise<string[]> {
+  // Fetch the pair instance for USDC-COMP
+  const usdcCompPair = await Fetcher.fetchPairData(USDC, COMP);
+  // get the best trade route for the USDC -> COMP trade
+  const [trade] = await Trade.bestTradeExactIn(
+    [usdcCompPair],
+    new TokenAmount(USDC, BigInt(amountIn)),
+    COMP,
+    { maxNumResults: 1 }
+  );
 
-export { getAmountOut, getPath };
+  // return the route path as an array of token addresses
+  return trade.route.path.map((token) => token.address);
+}
